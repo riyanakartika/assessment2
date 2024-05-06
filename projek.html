@@ -6,6 +6,40 @@
   <title>Data Penjualan</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
+
+<style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    .delete-btn {
+      background-color: #f44336;
+      color: white;
+      padding: 8px 12px;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .delete-btn:hover {
+      background-color: #d32f2f;
+    }
+  </style>
 </head>
 <body>
 
@@ -36,6 +70,40 @@
       }
     });
 
+    function displayData(data) {
+      var table = "";
+      $.each(data, function(index, item) {
+        table += "<tr>";
+        table += "<td>" + item.id + "</td>";
+        table += "<td>" + item.nama_menu + "</td>";
+        table += "<td>" + item.terjual + "</td>";
+        table += "<td>Rp " + item.harga.toLocaleString() + "</td>";
+        table += "<td><button class='delete-btn' data-id='" + item.id + "'>Hapus</button></td>";
+        table += "</tr>";
+      });
+      $("#data-container").html(table);
+    }
+
+      // Menghapus data ketika tombol hapus diklik
+        $(document).on("click", ".delete-btn", function() {
+        var id = $(this).data('id');
+        $.ajax({
+            type: "GET",
+            url: "delete.php?id=" + id, // Perbaikan URL dengan menambahkan parameter id
+            success: function(response) {
+            alert(response); // Menampilkan pesan hasil penghapusan
+            // Panggil kembali data setelah penghapusan
+            $.ajax({
+                type: "GET",
+                url: "projek.php",
+                dataType: "json",
+                success: function(data) {
+                displayData(data); // Menampilkan data yang telah diperbarui
+                }
+            });
+            }
+        });
+        });
 
     });
   </script>
